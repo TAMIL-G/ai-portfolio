@@ -429,12 +429,21 @@ export class Avatar implements AfterViewInit, OnDestroy {
 
       // Explicitly pick a voice if one's available — some browsers
       // stay silent with no voice assigned even though it's "supported"
+      // const voices = speechSynthesis.getVoices();
+      // if (voices.length) {
+      //   utterance.voice =
+      //     voices.find(v => v.lang.startsWith('en')) ?? voices[0];
+      // }
+      // NEW
       const voices = speechSynthesis.getVoices();
       if (voices.length) {
-        utterance.voice =
-          voices.find(v => v.lang.startsWith('en')) ?? voices[0];
+        const maleVoice = voices.find(v =>
+          v.lang.startsWith('en') &&
+          /male|david|mark|guy|daniel|ryan|matthew|george/i.test(v.name) &&
+          !/female|zira|susan|samantha|karen/i.test(v.name)
+        );
+        utterance.voice = maleVoice ?? voices.find(v => v.lang.startsWith('en')) ?? voices[0];
       }
-
       utterance.onstart = () => {
         this.isSpeaking = true;
         callbacks?.onStart?.();
@@ -495,3 +504,4 @@ export class Avatar implements AfterViewInit, OnDestroy {
     this.renderer.render(this.scene, this.camera);
   };
 }
+ 
